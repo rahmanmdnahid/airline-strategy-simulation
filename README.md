@@ -402,26 +402,9 @@ Environmental causes as CSR area. Above-market wages as stakeholder commitment. 
 ```
 ford2-airline-simulation/
 │
-├── README.md                          ← This file (full documentation)
-├── index.html                         ← Interactive portfolio website
-│
-├── data/
-│   ├── round_results/
-│   │   ├── Round_1.png                ← Q1 dashboard screenshot
-│   │   ├── round_2.png                ← Q2 dashboard screenshot
-│   │   ├── round_3.png                ← Q3 dashboard screenshot
-│   │   ├── round_4.png                ← Q4 dashboard screenshot
-│   │   ├── round_5.png                ← Q5 dashboard screenshot
-│   │   ├── round_6.png                ← Q6 dashboard screenshot
-│   │   ├── round_7.png                ← Q7 dashboard screenshot
-│   │   └── round_8.png                ← Q8 dashboard screenshot
-│   └── start_dashboard.png            ← Baseline/start dashboard
-│
-├── presentation/
-│   └── ForD2_Airlines_Final_Presentation.pdf    ← Official final presentation
-│
-└── decisions/
-    └── Airline_simulation_My_responsibility_and_rationality.docx  ← Decision rationale document
+├── README.md                                      ← Full project documentation
+├── index.html                                     ← Interactive portfolio website
+└── ForD2-Airlines-Strategic-Simulation-Report.pdf ← Final presentation
 ```
 
 ---
@@ -438,24 +421,6 @@ Open `presentation/ForD2_Airlines_Final_Presentation.pdf`
 
 ---
 
-## 📌 LinkedIn Post Template
-
-> 🛫 **Just completed my Strategic Management capstone — an 8-quarter airline industry simulation in a 12-airline competitive field.**
->
-> As the team member responsible for Marketing, Financing, and Services for **ForD2 Airlines**, I made 8 rounds of data-driven decisions on fare strategy, marketing spend, service levels, and financing — applying four years of business education in a live competitive environment.
->
-> **Key results:**
-> ✅ $735,348 final cumulative net profit (Rank #8 of 12)
-> ✅ 95% peak reliability | Quality score grew from 70 → 86
-> ✅ Rank #1 gross revenue in Q1 and Q2 ($4.13M peak)
-> ✅ Zero debt across all 8 quarters — fully self-funded
-> ✅ 6 consecutive profitable quarters (Q2–Q6)
->
-> **Biggest lesson:** The difference between revenue maximization and profit maximization. We ranked #1 in gross revenue in Q1 but last in net profit. Right-sizing operations to actual demand — not chasing volume — is what drives sustainable profitability.
->
-> Full simulation report and interactive dashboard linked below 👇
->
-> #StrategicManagement #BusinessStrategy #AirlineIndustry #Capstone #BusinessSchool
 
 ---
 
