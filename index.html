@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ForD2 Airlines — Strategic Management Simulation | Md Nahid Rahman</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0B1628;
+  --navy-mid: #112240;
+  --navy-light: #1a3357;
+  --gold: #F5A623;
+  --gold-light: #FFD275;
+  --teal: #1DB4A0;
+  --teal-dark: #0e8a7a;
+  --red: #E84040;
+  --green: #22C55E;
+  --white: #F0F4FF;
+  --gray: #8899AA;
+  --card-bg: rgba(17, 34, 64, 0.7);
+  --border: rgba(245, 166, 35, 0.2);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; width: 100%; z-index: 1000;
+  background: rgba(11, 22, 40, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 5vw;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+.nav-logo span { color: var(--white); }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  color: var(--gray);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--gold); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 100px 5vw 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(245,166,35,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,166,35,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(29,180,160,0.15) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  pointer-events: none;
+}
+.hero-glow-2 {
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(245,166,35,0.1) 0%, transparent 70%);
+  bottom: 0; left: 10%;
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(245,166,35,0.1);
+  border: 1px solid rgba(245,166,35,0.3);
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-size: 0.78rem;
+  color: var(--gold);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  width: fit-content;
+}
+.hero-badge::before {
+  content: '✈';
+  font-size: 1rem;
+}
+
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: 2px;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+.hero h1 .accent { color: var(--gold); }
+.hero h1 .sub { display: block; font-size: clamp(1.8rem, 4vw, 3.5rem); color: var(--teal); }
+
+.hero-desc {
+  max-width: 650px;
+  font-size: 1.05rem;
+  color: var(--gray);
+  margin-bottom: 3rem;
+  line-height: 1.8;
+  font-weight: 300;
+}
+.hero-desc strong { color: var(--white); font-weight: 500; }
+
+.hero-stats {
+  display: flex; gap: 3rem; flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+.stat-item {}
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.8rem;
+  color: var(--gold);
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+.hero-cta {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px;
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+.btn-primary { background: var(--gold); color: var(--navy); }
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(240,244,255,0.3);
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── SECTION ── */
+section {
+  padding: 100px 5vw;
+  position: relative;
+}
+.section-label {
+  font-size: 0.72rem;
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 5vw, 4rem);
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  line-height: 1;
+}
+.section-title .accent { color: var(--gold); }
+.section-desc {
+  color: var(--gray);
+  max-width: 700px;
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 4rem;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 0 5vw;
+}
+
+/* ── OVERVIEW CARDS ── */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+.overview-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.overview-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold);
+}
+.overview-card:hover { transform: translateY(-4px); border-color: rgba(245,166,35,0.4); }
+.ov-icon { font-size: 2rem; margin-bottom: 1rem; }
+.ov-label { font-size: 0.75rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.1em; }
+.ov-value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold); letter-spacing: 1px; margin: 4px 0; }
+.ov-desc { font-size: 0.85rem; color: var(--gray); }
+
+/* ── QUARTERS TIMELINE ── */
+.timeline {
+  position: relative;
+  padding-left: 40px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 14px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--gold), var(--teal), var(--gold));
+}
+.quarter-block {
+  position: relative;
+  margin-bottom: 3.5rem;
+  animation: fadeIn 0.5s ease both;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: none; } }
+
+.quarter-dot {
+  position: absolute;
+  left: -33px;
+  top: 8px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+}
+.dot-loss { background: var(--red); color: white; }
+.dot-gain { background: var(--green); color: white; }
+.dot-peak { background: var(--gold); color: var(--navy); }
+
+.quarter-header {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.quarter-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+.quarter-title { font-weight: 600; font-size: 1.05rem; }
+.quarter-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.tag {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+.tag-red { background: rgba(232,64,64,0.15); color: var(--red); border: 1px solid rgba(232,64,64,0.3); }
+.tag-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+.tag-gold { background: rgba(245,166,35,0.15); color: var(--gold); border: 1px solid rgba(245,166,35,0.3); }
+.tag-teal { background: rgba(29,180,160,0.15); color: var(--teal); border: 1px solid rgba(29,180,160,0.3); }
+
+.quarter-metrics {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.metric-pill {
+  background: rgba(17,34,64,0.8);
+  border: 1px solid rgba(136,153,170,0.2);
+  border-radius: 6px;
+  padding: 8px 14px;
+  min-width: 120px;
+}
+.mp-label { font-size: 0.67rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.08em; }
+.mp-val { font-family: 'DM Mono', monospace; font-size: 0.95rem; font-weight: 500; }
+.mp-val.pos { color: var(--green); }
+.mp-val.neg { color: var(--red); }
+.mp-val.neu { color: var(--white); }
+.mp-val.gold { color: var(--gold); }
+
+.quarter-body {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+.quarter-section-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--teal);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+.quarter-section-title:first-child { margin-top: 0; }
+.quarter-text {
+  font-size: 0.9rem;
+  color: var(--gray);
+  line-height: 1.7;
+}
+.quarter-text strong { color: var(--white); }
+
+/* ── KPI DASHBOARD ── */
+.kpi-table-wrap {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.kpi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  min-width: 800px;
+}
+.kpi-table th {
+  background: rgba(17,34,64,0.9);
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.kpi-table th:first-child { color: var(--gold); }
+.kpi-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid rgba(245,166,35,0.07);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+.kpi-table tr:last-child td { border-bottom: none; }
+.kpi-table tr:hover td { background: rgba(245,166,35,0.04); }
+.kpi-table .qcol { color: var(--gold); font-weight: 600; }
+.kpi-table .pos { color: var(--green); }
+.kpi-table .neg { color: var(--red); }
+.kpi-table .neu { color: var(--white); }
+.kpi-table .gray { color: var(--gray); }
+.kpi-table .rank-hi { color: var(--green); }
+.kpi-table .rank-mid { color: var(--gold); }
+.kpi-table .rank-lo { color: var(--red); }
+
+/* ── RESPONSIBILITY SECTION ── */
+.resp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+@media (max-width: 768px) { .resp-grid { grid-template-columns: 1fr; } }
+
+.resp-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem;
+}
+.resp-card-header {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.resp-icon {
+  width: 48px; height: 48px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.resp-name { font-weight: 600; font-size: 1rem; }
+.resp-role { font-size: 0.8rem; color: var(--teal); margin-top: 2px; }
+
+.decision-list { list-style: none; }
+.decision-list li {
+  display: flex; gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(136,153,170,0.1);
+  font-size: 0.88rem;
+  color: var(--gray);
+  line-height: 1.6;
+}
+.decision-list li:last-child { border-bottom: none; }
+.decision-list li::before {
+  content: '→';
+  color: var(--gold);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── MY DECISIONS DETAILED ── */
+.my-rounds {
+  display: flex; flex-direction: column; gap: 1.5rem;
+}
+.my-round-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--teal);
+  border-radius: 0 8px 8px 0;
+  padding: 1.5rem;
+  transition: border-left-color 0.2s;
+}
+.my-round-card:hover { border-left-color: var(--gold); }
+.mrc-header {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+}
+.mrc-q { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--gold); }
+.mrc-title { font-weight: 600; font-size: 0.95rem; }
+.mrc-body { font-size: 0.87rem; color: var(--gray); line-height: 1.75; }
+.mrc-body strong { color: var(--white); font-weight: 500; }
+.mrc-decisions {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;
+}
+.mrc-dec {
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: rgba(29,180,160,0.1);
+  color: var(--teal);
+  border: 1px solid rgba(29,180,160,0.2);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── CHARTS (CSS) ── */
+.bar-chart { margin-top: 2rem; }
+.bar-row {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+.bar-label {
+  font-size: 0.8rem;
+  color: var(--gray);
+  font-family: 'DM Mono', monospace;
+  width: 40px;
+  flex-shrink: 0;
+  text-align: right;
+}
+.bar-track {
+  flex: 1;
+  height: 28px;
+  background: rgba(17,34,64,0.8);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(136,153,170,0.1);
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  display: flex; align-items: center; padding-left: 10px;
+  font-size: 0.75rem;
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  transition: width 1s ease;
+}
+.bar-pos { background: linear-gradient(90deg, var(--teal-dark), var(--teal)); color: var(--navy); }
+.bar-neg { background: linear-gradient(90deg, #8B1A1A, var(--red)); color: white; }
+.bar-peak { background: linear-gradient(90deg, #B8820F, var(--gold)); color: var(--navy); }
+
+/* ── LESSONS ── */
+.lessons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.lesson-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+.lesson-card:hover { transform: translateY(-3px); }
+.lesson-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 5rem;
+  color: rgba(245,166,35,0.06);
+  position: absolute;
+  top: -10px; right: 20px;
+  line-height: 1;
+  pointer-events: none;
+}
+.lesson-icon { font-size: 1.6rem; margin-bottom: 1rem; }
+.lesson-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem; color: var(--white); }
+.lesson-text { font-size: 0.87rem; color: var(--gray); line-height: 1.7; }
+.lesson-text strong { color: var(--teal); font-weight: 500; }
+
+/* ── COMPETITIVE RANKING TABLE ── */
+.rank-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.rank-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  text-align: center;
+}
+.rank-cat { font-size: 0.72rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.rank-val { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; }
+.rank-context { font-size: 0.75rem; color: var(--gray); margin-top: 4px; }
+.rank-green { color: var(--green); }
+.rank-gold { color: var(--gold); }
+.rank-red { color: var(--red); }
+
+/* ── ABOUT SECTION ── */
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1.5fr; gap: 5rem; align-items: center;
+}
+@media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 2rem; } }
+.about-left {}
+.about-name { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--gold); letter-spacing: 2px; line-height: 1; }
+.about-title { color: var(--teal); font-size: 1rem; margin-top: 0.5rem; font-weight: 500; }
+.about-univ { color: var(--gray); font-size: 0.88rem; margin-top: 0.5rem; }
+
+.skills-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+.skill-chip {
+  background: rgba(245,166,35,0.08);
+  border: 1px solid rgba(245,166,35,0.2);
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  color: var(--gold);
+}
+
+.about-right { }
+.about-text {
+  font-size: 0.95rem;
+  color: var(--gray);
+  line-height: 1.85;
+  margin-bottom: 1rem;
+}
+.about-text strong { color: var(--white); font-weight: 500; }
+
+/* ── STRATEGY SECTION ── */
+.strategy-pillars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+.pillar {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem;
+  border-top: 3px solid transparent;
+  transition: all 0.2s;
+}
+.pillar:nth-child(1) { border-top-color: var(--gold); }
+.pillar:nth-child(2) { border-top-color: var(--teal); }
+.pillar:nth-child(3) { border-top-color: var(--red); }
+.pillar:nth-child(4) { border-top-color: #9B59B6; }
+.pillar:nth-child(5) { border-top-color: #3498DB; }
+.pillar:hover { transform: translateY(-4px); }
+.pillar-icon { font-size: 2rem; margin-bottom: 1rem; }
+.pillar-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
+.pillar-text { font-size: 0.85rem; color: var(--gray); line-height: 1.7; }
+
+/* ── FOOTER ── */
+footer {
+  background: rgba(11,22,40,0.8);
+  border-top: 1px solid var(--border);
+  padding: 3rem 5vw;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1.5rem;
+}
+.footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--gold); }
+.footer-text { font-size: 0.82rem; color: var(--gray); }
+.footer-links { display: flex; gap: 1.5rem; }
+.footer-links a { color: var(--gray); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+.footer-links a:hover { color: var(--gold); }
+
+/* ── ANIMATIONS ── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero > * { animation: slideUp 0.8s ease both; }
+.hero > *:nth-child(1) { animation-delay: 0.1s; }
+.hero > *:nth-child(2) { animation-delay: 0.2s; }
+.hero > *:nth-child(3) { animation-delay: 0.3s; }
+.hero > *:nth-child(4) { animation-delay: 0.4s; }
+.hero > *:nth-child(5) { animation-delay: 0.5s; }
+.hero > *:nth-child(6) { animation-delay: 0.6s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .hero-stats { gap: 1.5rem; }
+  .nav-links { display: none; }
+  section { padding: 60px 5vw; }
+  .overview-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── STRATEGY FRAMEWORK ── */
+.framework {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+@media (max-width: 768px) { .framework { grid-template-columns: 1fr; } }
+.framework-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem;
+}
+.fb-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--gold); margin-bottom: 1rem; letter-spacing: 1px; }
+.fb-list { list-style: none; }
+.fb-list li { display: flex; gap: 10px; padding: 7px 0; font-size: 0.87rem; color: var(--gray); border-bottom: 1px solid rgba(136,153,170,0.08); line-height: 1.5; }
+.fb-list li:last-child { border-bottom: none; }
+.fb-list li .check { color: var(--green); flex-shrink: 0; }
+.fb-list li .cross { color: var(--red); flex-shrink: 0; }
+.fb-list li .arrow { color: var(--gold); flex-shrink: 0; }
+.fb-list strong { color: var(--white); font-weight: 500; }
+
+/* Progress bar section */
+.progress-section { margin-top: 3rem; }
+.progress-item { margin-bottom: 1.5rem; }
+.progress-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.progress-name { font-size: 0.85rem; font-weight: 500; }
+.progress-score { font-family: 'DM Mono', monospace; font-size: 0.82rem; color: var(--gold); }
+.progress-track {
+  height: 8px;
+  background: rgba(17,34,64,0.8);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--teal-dark), var(--teal));
+  transition: width 1.5s ease;
+}
+.progress-fill.gold { background: linear-gradient(90deg, #B8820F, var(--gold)); }
+
+/* Phase banner */
+.phase-banner {
+  background: linear-gradient(135deg, rgba(17,34,64,0.9), rgba(11,22,40,0.9));
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.phase-badge {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.phase-crisis { background: rgba(232,64,64,0.15); color: var(--red); border: 1px solid rgba(232,64,64,0.3); }
+.phase-recovery { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+.phase-growth { background: rgba(245,166,35,0.15); color: var(--gold); border: 1px solid rgba(245,166,35,0.3); }
+.phase-plateau { background: rgba(29,180,160,0.15); color: var(--teal); border: 1px solid rgba(29,180,160,0.3); }
+.phase-text { font-size: 0.88rem; color: var(--gray); line-height: 1.5; }
+.phase-text strong { color: var(--white); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">ForD2 <span>Airlines</span></div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#quarters">8 Quarters</a></li>
+    <li><a href="#performance">Performance</a></li>
+    <li><a href="#responsibility">My Role</a></li>
+    <li><a href="#strategy">Strategy</a></li>
+    <li><a href="#lessons">Lessons</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="hero-badge">Strategic Management · Airline Simulation · 8 Quarters</div>
+
+  <h1>
+    ForD2 <span class="accent">Airlines</span>
+    <span class="sub">Full Simulation Report</span>
+  </h1>
+
+  <p class="hero-desc">
+    A <strong>12-airline competitive simulation</strong> run across 8 quarters, applying every pillar of undergraduate business education — financial management, marketing strategy, operations, HR, and corporate social responsibility — to build and sustain a profitable airline from the ground up.
+  </p>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">$735K</div>
+      <div class="stat-label">Final Cumulative Net Profit</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">95%</div>
+      <div class="stat-label">Peak Reliability (Q5)</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">Rank 8</div>
+      <div class="stat-label">Final Overall Ranking</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">$4.13M</div>
+      <div class="stat-label">Peak Gross Revenue (Q2)</div>
+    </div>
+  </div>
+
+  <div class="hero-cta">
+    <a href="#quarters" class="btn btn-primary">↓ Explore All 8 Quarters</a>
+    <a href="#responsibility" class="btn btn-outline">My Decisions & Rationale</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="section-label">Simulation Overview</div>
+  <div class="section-title">ForD2 Airlines <span class="accent">At a Glance</span></div>
+  <p class="section-desc">ForD2 Airlines operated within a 12-airline competitive environment across 8 quarters. Our strategy was built on operational consistency, conservative financing, above-market employee investment, and disciplined demand management across four regional routes.</p>
+
+  <div class="overview-grid">
+    <div class="overview-card">
+      <div class="ov-icon">✈️</div>
+      <div class="ov-label">Fleet Type</div>
+      <div class="ov-value">TP-300</div>
+      <div class="ov-desc">Normal configuration · 4 aircraft total · No acquisitions or disposals</div>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon">🗺️</div>
+      <div class="ov-label">Active Routes</div>
+      <div class="ov-value">4 ROUTES</div>
+      <div class="ov-desc">3A (600 mi) · 3B (400 mi) · 3E1 (400 mi) · 3F (420 mi) — stable all 8 quarters</div>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon">💰</div>
+      <div class="ov-label">Fare Strategy</div>
+      <div class="ov-value">37¢/mi</div>
+      <div class="ov-desc">Normal pricing structure · Route 3F 2-Month Sale applied strategically</div>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon">👥</div>
+      <div class="ov-label">Wage Policy</div>
+      <div class="ov-value">+2% Above</div>
+      <div class="ov-desc">Maintained above prevailing wage all 8 quarters · $8,000/qtr training budget</div>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon">🔧</div>
+      <div class="ov-label">Maintenance</div>
+      <div class="ov-value">LEVEL 2</div>
+      <div class="ov-desc">$3,500/aircraft/quarter · Additional cleaning & mechanical upkeep</div>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon">⛽</div>
+      <div class="ov-label">Fuel Strategy</div>
+      <div class="ov-value">CONTRACT</div>
+      <div class="ov-desc">100% on fuel contract every quarter · Zero spot-price exposure</div>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon">📢</div>
+      <div class="ov-label">Marketing</div>
+      <div class="ov-value">$13K/QTR</div>
+      <div class="ov-desc">$7K promotion + $6K advertising · In-flight magazine · 100% Region 3 focus</div>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon">🏦</div>
+      <div class="ov-label">Financing</div>
+      <div class="ov-value">$0 DEBT</div>
+      <div class="ov-desc">Zero loans · Zero stock sales · No dividends · Fully self-funded operations</div>
+    </div>
+    <div class="overview-card">
+      <div class="ov-icon">🌿</div>
+      <div class="ov-label">Social Responsibility</div>
+      <div class="ov-value">ENV.</div>
+      <div class="ov-desc">Environmental causes selected as CSR area · Diversity hiring in Q8</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 8 QUARTERS TIMELINE -->
+<section id="quarters">
+  <div class="section-label">Quarter-by-Quarter Analysis</div>
+  <div class="section-title">The <span class="accent">Complete Journey</span></div>
+  <p class="section-desc">Every quarter brought distinct challenges, competitive pressures, and decision trade-offs. Below is a comprehensive breakdown of each quarter's scenario, results, and the strategic logic behind every major decision made by the team.</p>
+
+  <div class="timeline">
+
+    <!-- Q1 -->
+    <div class="quarter-block">
+      <div class="quarter-dot dot-loss">Q1</div>
+      <div class="quarter-header">
+        <span class="quarter-num">QUARTER 1</span>
+        <span class="quarter-title">The Rough Launch — Scale Mismatch Crisis</span>
+        <div class="quarter-tags">
+          <span class="tag tag-red">Net Loss</span>
+          <span class="tag tag-green">Revenue Rank #1</span>
+          <span class="tag tag-teal">Foundation Building</span>
+        </div>
+      </div>
+
+      <div class="quarter-metrics">
+        <div class="metric-pill"><div class="mp-label">Stock Price</div><div class="mp-val neg">$17.03 (#12)</div></div>
+        <div class="metric-pill"><div class="mp-label">Gross Revenue</div><div class="mp-val pos">$3,927,483 (#1)</div></div>
+        <div class="metric-pill"><div class="mp-label">Net Profit</div><div class="mp-val neg">$(144,031) (#12)</div></div>
+        <div class="metric-pill"><div class="mp-label">Reliability</div><div class="mp-val pos">91.9% (#4)</div></div>
+        <div class="metric-pill"><div class="mp-label">Quality</div><div class="mp-val pos">70 (#3)</div></div>
+        <div class="metric-pill"><div class="mp-label">Load Factor</div><div class="mp-val neg">49.7% (#12)</div></div>
+        <div class="metric-pill"><div class="mp-label">Cost/ASM</div><div class="mp-val neu">$0.208 (#8)</div></div>
+        <div class="metric-pill"><div class="mp-label">Cum. Net Profit</div><div class="mp-val neg">$(138,778)</div></div>
+      </div>
+
+      <div class="quarter-body">
+        <div class="quarter-section-title">📊 What Happened</div>
+        <p class="quarter-text">Q1 was the hardest quarter. We entered with a full fleet deployed across 4 routes but only filled <strong>49.7% of seats</strong> — dead last in the 12-airline field. Despite generating the highest gross revenue at <strong>$3.93M (Rank #1)</strong>, our operating expenses of $3.96M exceeded revenue, producing a net loss of <strong>$(144,031)</strong>. The paradox: highest revenue, worst profit. This exposed a critical <strong>scale-demand mismatch</strong> — too many seats flying half-empty.</p>
+
+        <div class="quarter-section-title">🎯 Key Decisions Made</div>
+        <p class="quarter-text">To build demand, the team focused 100% of marketing on <strong>Region 3</strong> to avoid expansion costs. Promotion was kept consistent to maintain brand visibility. We joined <strong>online consortiums</strong> as a special decision to increase reach at minimal cost. Financing was unchanged — no loans, no stock changes — preserving cash and avoiding interest burden. An investment of $1,000 was made in <strong>environmental causes</strong> to strengthen brand image.</p>
+
+        <div class="quarter-section-title">⚠️ Critical Insight</div>
+        <p class="quarter-text">The mismatch between fleet size and passenger demand (Cost/ASM $0.208 vs Yield/ASM $0.174) meant every flight was losing money per seat mile. This became the primary problem to solve in Q2. The stock price dropped <strong>14.8%</strong> to $17.03, signaling market concern about the airline's direction.</p>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quarter-block">
+      <div class="quarter-dot dot-gain">Q2</div>
+      <div class="quarter-header">
+        <span class="quarter-num">QUARTER 2</span>
+        <span class="quarter-title">The Breakthrough — From Loss to Rank #2 Profit</span>
+        <div class="quarter-tags">
+          <span class="tag tag-green">Major Recovery</span>
+          <span class="tag tag-green">Revenue Rank #1</span>
+          <span class="tag tag-gold">+72% Stock</span>
+        </div>
+      </div>
+
+      <div class="quarter-metrics">
+        <div class="metric-pill"><div class="mp-label">Stock Price</div><div class="mp-val pos">$29.36 (#7) +72.4%</div></div>
+        <div class="metric-pill"><div class="mp-label">Gross Revenue</div><div class="mp-val pos">$4,134,894 (#1)</div></div>
+        <div class="metric-pill"><div class="mp-label">Net Profit</div><div class="mp-val pos">$235,916 (#2)</div></div>
+        <div class="metric-pill"><div class="mp-label">Reliability</div><div class="mp-val pos">93.1% (#6)</div></div>
+        <div class="metric-pill"><div class="mp-label">Quality</div><div class="mp-val pos">74 (#5)</div></div>
+        <div class="metric-pill"><div class="mp-label">Load Factor</div><div class="mp-val neu">57.2% (#9) +7.4%</div></div>
+        <div class="metric-pill"><div class="mp-label">EPS</div><div class="mp-val pos">$1.57 (#2)</div></div>
+        <div class="metric-pill"><div class="mp-label">Cum. Net Profit</div><div class="mp-val pos">$97,138</div></div>
+      </div>
+
+      <div class="quarter-body">
+        <div class="quarter-section-title">📊 What Happened</div>
+        <p class="quarter-text">Q2 was the defining turnaround. The team's operational adjustments paid off dramatically — net profit swung from <strong>$(144,031)</strong> to <strong>+$235,916</strong>, landing at <strong>Rank #2 in the entire 12-airline field</strong>. Load factor improved from 49.7% to 57.2%. Operating expenses dropped by 4% to $3.80M as demand caught up with supply. The stock price surged <strong>72.4%</strong> to $29.36. Cumulative net profit turned positive for the first time at $97K.</p>
+
+        <div class="quarter-section-title">🎯 Key Decisions Made</div>
+        <p class="quarter-text">Marketing budgets were increased — higher promotion and advertising spending directly drove the load factor improvement. The team maintained <strong>zero sales force</strong> (cost-efficient), kept cabin/food at Level 1, and retained baggage + seat selection fees for ancillary revenue. Financing remained unchanged — the positive cash flow justified keeping zero debt. This was a <strong>demand-led recovery</strong> without any increase in financial risk.</p>
+
+        <div class="quarter-section-title">✅ Strategic Validation</div>
+        <p class="quarter-text">The Q2 result proved that the <strong>underlying operational model was sound</strong>. The Q1 loss was a demand problem, not a structural one. By accelerating demand through targeted marketing while holding costs steady, the business crossed the break-even threshold and generated strong per-share earnings of $1.57.</p>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quarter-block">
+      <div class="quarter-dot dot-peak">Q3</div>
+      <div class="quarter-header">
+        <span class="quarter-num">QUARTER 3</span>
+        <span class="quarter-title">Peak Profitability — Best Net Profit of the Simulation</span>
+        <div class="quarter-tags">
+          <span class="tag tag-gold">Best Quarter</span>
+          <span class="tag tag-green">EPS $2.70</span>
+          <span class="tag tag-teal">Load Factor Peak</span>
+        </div>
+      </div>
+
+      <div class="quarter-metrics">
+        <div class="metric-pill"><div class="mp-label">Stock Price</div><div class="mp-val neu">$29.15 (#8)</div></div>
+        <div class="metric-pill"><div class="mp-label">Gross Revenue</div><div class="mp-val neg">$1,833,895 (#10)</div></div>
+        <div class="metric-pill"><div class="mp-label">Net Profit</div><div class="mp-val pos">$404,349 (#8) ← Best!</div></div>
+        <div class="metric-pill"><div class="mp-label">Reliability</div><div class="mp-val pos">94.4% (#5)</div></div>
+        <div class="metric-pill"><div class="mp-label">Quality</div><div class="mp-val pos">81 (#5)</div></div>
+        <div class="metric-pill"><div class="mp-label">Load Factor</div><div class="mp-val pos">67.8% (#5) — Peak!</div></div>
+        <div class="metric-pill"><div class="mp-label">EPS</div><div class="mp-val pos">$2.70 (#8)</div></div>
+        <div class="metric-pill"><div class="mp-label">Cum. Net Profit</div><div class="mp-val pos">$501,487</div></div>
+      </div>
+
+      <div class="quarter-body">
+        <div class="quarter-section-title">📊 What Happened</div>
+        <p class="quarter-text">Q3 produced the <strong>highest net profit of the entire simulation — $404,349</strong>. The load factor peaked at <strong>67.8%</strong>, the best the airline achieved. Operating expenses dropped dramatically from $3.80M to $1.54M as the operation was right-sized for the actual demand level. EPS hit $2.70 — almost double Q2. Reliability climbed to 94.4%. Cumulative profit crossed the half-million mark at <strong>$501,487</strong>.</p>
+
+        <div class="quarter-section-title">🎯 Key Decisions Made</div>
+        <p class="quarter-text">In a counterintuitive move, marketing spending was <strong>reduced</strong> — promotion cut to $3,000 and advertising to $3,500, with PR and in-flight magazine removed. This reflected the team's insight that the operation had found its demand level and further spending wouldn't proportionally improve load. The focus shifted to <strong>cost discipline</strong>. Service stayed at Level 1, baggage fees retained. Financing remained debt-free with no changes.</p>
+
+        <div class="quarter-section-title">🔍 Key Insight</div>
+        <p class="quarter-text">The large gross revenue drop from $4.13M to $1.83M was due to operational scaling — fewer total flights/capacity deployed, but <strong>each flight was now highly profitable</strong>. This shift from high-volume/low-margin to right-sized/high-margin operations was the single most important strategic adjustment of the simulation.</p>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quarter-block">
+      <div class="quarter-dot dot-gain">Q4</div>
+      <div class="quarter-header">
+        <span class="quarter-num">QUARTER 4</span>
+        <span class="quarter-title">Quality Peak — Load Factor Dip Requires Demand Response</span>
+        <div class="quarter-tags">
+          <span class="tag tag-gold">Quality 86 — Peak</span>
+          <span class="tag tag-red">Load Factor Dip</span>
+          <span class="tag tag-green">Positive Profit</span>
+        </div>
+      </div>
+
+      <div class="quarter-metrics">
+        <div class="metric-pill"><div class="mp-label">Stock Price</div><div class="mp-val neg">$27.81 (#5) -4.6%</div></div>
+        <div class="metric-pill"><div class="mp-label">Gross Revenue</div><div class="mp-val neg">$1,522,458 (#12)</div></div>
+        <div class="metric-pill"><div class="mp-label">Net Profit</div><div class="mp-val pos">$69,480 (#4)</div></div>
+        <div class="metric-pill"><div class="mp-label">Reliability</div><div class="mp-val pos">94.4% (#4)</div></div>
+        <div class="metric-pill"><div class="mp-label">Quality</div><div class="mp-val gold">86 (#6) — Peak!</div></div>
+        <div class="metric-pill"><div class="mp-label">Load Factor</div><div class="mp-val neg">50.9% (#8) -16.9%</div></div>
+        <div class="metric-pill"><div class="mp-label">EPS</div><div class="mp-val pos">$0.46 (#4)</div></div>
+        <div class="metric-pill"><div class="mp-label">Cum. Net Profit</div><div class="mp-val pos">$570,967</div></div>
+      </div>
+
+      <div class="quarter-body">
+        <div class="quarter-section-title">📊 What Happened</div>
+        <p class="quarter-text">Q4 delivered a <strong>quality score peak of 86</strong> — the highest in the simulation — while also revealing a load factor problem. The passenger load factor fell sharply from 67.8% to <strong>50.9%</strong>, well below the break-even threshold of ~56.9%. Despite this, the airline remained profitable at $69,480, supported by its lean cost structure. Reliability held at a strong 94.4%.</p>
+
+        <div class="quarter-section-title">🎯 Key Decisions Made</div>
+        <p class="quarter-text">The load factor decline below break-even triggered a demand-side intervention. Marketing budgets were increased — promotion raised to $4,000, advertising to $5,000. PR and in-flight magazine were eliminated as low-ROI expenses. Service was reduced from Level 2 to Level 1 to lower per-passenger costs. The <strong>dual designate partnership</strong> was accepted to boost passenger inflow. Cargo service was deferred to avoid short-term cost increases. Financing: no changes, cash position remained strong.</p>
+
+        <div class="quarter-section-title">⚡ Decision Under Pressure</div>
+        <p class="quarter-text">This quarter exemplified <strong>data-driven crisis response</strong>. With load factor 6 points below break-even, the team correctly identified the problem, diagnosed the cause (insufficient demand), and deployed targeted marketing resources while simultaneously reducing costs — a balanced two-lever approach.</p>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="quarter-block">
+      <div class="quarter-dot dot-peak">Q5</div>
+      <div class="quarter-header">
+        <span class="quarter-num">QUARTER 5</span>
+        <span class="quarter-title">Peak Stock & Reliability — Best Overall Quarter</span>
+        <div class="quarter-tags">
+          <span class="tag tag-gold">Peak Stock $31.05</span>
+          <span class="tag tag-gold">Peak Reliability 95%</span>
+          <span class="tag tag-green">Strong Profit</span>
+        </div>
+      </div>
+
+      <div class="quarter-metrics">
+        <div class="metric-pill"><div class="mp-label">Stock Price</div><div class="mp-val gold">$31.05 (#5) — Peak!</div></div>
+        <div class="metric-pill"><div class="mp-label">Gross Revenue</div><div class="mp-val neg">$1,581,759 (#12)</div></div>
+        <div class="metric-pill"><div class="mp-label">Net Profit</div><div class="mp-val pos">$126,255 (#6)</div></div>
+        <div class="metric-pill"><div class="mp-label">Reliability</div><div class="mp-val gold">95.0% (#5) — Peak!</div></div>
+        <div class="metric-pill"><div class="mp-label">Quality</div><div class="mp-val gold">86 (#6)</div></div>
+        <div class="metric-pill"><div class="mp-label">Load Factor</div><div class="mp-val neu">59.4% (#7) +8.5%</div></div>
+        <div class="metric-pill"><div class="mp-label">EPS</div><div class="mp-val pos">$0.84 (#6)</div></div>
+        <div class="metric-pill"><div class="mp-label">Cum. Net Profit</div><div class="mp-val pos">$697,222</div></div>
+      </div>
+
+      <div class="quarter-body">
+        <div class="quarter-section-title">📊 What Happened</div>
+        <p class="quarter-text">Q5 was the <strong>high-water mark of the simulation</strong> across multiple dimensions simultaneously. Stock price hit its all-time peak of <strong>$31.05</strong>. Reliability reached its best-ever <strong>95.0% (Rank 5)</strong>. Load factor recovered to 59.4%, crossing back above the break-even threshold. Net profit was a healthy $126,255. The airline's quality score tied its peak at 86. Cumulative profit surpassed $697K.</p>
+
+        <div class="quarter-section-title">🎯 Key Decisions Made</div>
+        <p class="quarter-text">The fare was slightly increased from 35¢ to <strong>36¢</strong> given the recovered load factor. A <strong>$3 food and drinks fee</strong> was introduced plus maintained existing service fees to increase ancillary revenue per passenger. Marketing stayed at $4K promotion / $5K advertising — the combination that drove the Q4 recovery. The charter trip special decision was <strong>declined</strong> due to potential legal and reputational risk. Company name kept unchanged for brand consistency. Cargo service again deferred.</p>
+
+        <div class="quarter-section-title">✅ Peak Performance Analysis</div>
+        <p class="quarter-text">Three simultaneous peaks (stock, reliability, cumulative profit trajectory) confirmed that the airline's operating model had reached its optimal configuration. The combination of Level 2 maintenance, above-market wages, $8K training budget, and fuel contract was producing a <strong>superior operational reliability profile</strong> relative to competitors.</p>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="quarter-block">
+      <div class="quarter-dot dot-gain">Q6</div>
+      <div class="quarter-header">
+        <span class="quarter-num">QUARTER 6</span>
+        <span class="quarter-title">Profit Peak — Cumulative Hits $792K High</span>
+        <div class="quarter-tags">
+          <span class="tag tag-gold">Cumulative Peak $792K</span>
+          <span class="tag tag-green">Positive Profit</span>
+          <span class="tag tag-red">Quality Slip</span>
+        </div>
+      </div>
+
+      <div class="quarter-metrics">
+        <div class="metric-pill"><div class="mp-label">Stock Price</div><div class="mp-val neg">$29.56 (#7) -4.8%</div></div>
+        <div class="metric-pill"><div class="mp-label">Gross Revenue</div><div class="mp-val neg">$1,518,592 (#12)</div></div>
+        <div class="metric-pill"><div class="mp-label">Net Profit</div><div class="mp-val pos">$95,015 (#8)</div></div>
+        <div class="metric-pill"><div class="mp-label">Reliability</div><div class="mp-val neu">94.6% (#7)</div></div>
+        <div class="metric-pill"><div class="mp-label">Quality</div><div class="mp-val neg">81 (#10)</div></div>
+        <div class="metric-pill"><div class="mp-label">Load Factor</div><div class="mp-val neg">56.4% (#10) -3%</div></div>
+        <div class="metric-pill"><div class="mp-label">EPS</div><div class="mp-val pos">$0.63 (#8)</div></div>
+        <div class="metric-pill"><div class="mp-label">Cum. Net Profit</div><div class="mp-val gold">$792,237 — PEAK!</div></div>
+      </div>
+
+      <div class="quarter-body">
+        <div class="quarter-section-title">📊 What Happened</div>
+        <p class="quarter-text">Q6 achieved the <strong>highest cumulative net profit of the entire simulation — $792,237</strong>. The airline remained profitable at $95,015 net income. However, warning signs emerged: quality score slipped from 86 to <strong>81 (Rank 10)</strong>, load factor edged down to 56.4%, and stock price declined 4.8%. These signals indicated the airline was approaching a <strong>competitive plateau</strong> that would need addressing.</p>
+
+        <div class="quarter-section-title">🎯 Key Decisions Made</div>
+        <p class="quarter-text">The fare was held at 36¢ with Level 1 cabin service and maintained fees. Marketing: promotion $4K, advertising $5K — in-flight magazine and PR removed for cost efficiency. Sales force stayed at zero. <strong>100% Region 3 focus maintained</strong>. Financing: strong cash position of $1.73M meant no loans needed. Competitor employee hiring was declined. Cargo service again deferred — requiring several quarters to break even and conflicting with the core passenger focus.</p>
+
+        <div class="quarter-section-title">📉 Emerging Challenges</div>
+        <p class="quarter-text">The simultaneous decline in quality score (−5.8%), load factor (−3%), and stock price signaled that competitors were intensifying. The gross revenue Rank 12 position persisted — indicating the airline's smaller operational footprint was not growing revenue as aggressively as the field. A <strong>strategic inflection point</strong> had been reached.</p>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="quarter-block">
+      <div class="quarter-dot dot-loss">Q7</div>
+      <div class="quarter-header">
+        <span class="quarter-num">QUARTER 7</span>
+        <span class="quarter-title">Inflection Point — Near-Breakeven Under Competitive Pressure</span>
+        <div class="quarter-tags">
+          <span class="tag tag-red">Near Breakeven</span>
+          <span class="tag tag-teal">Strong Load Factor</span>
+          <span class="tag tag-red">Stock Decline</span>
+        </div>
+      </div>
+
+      <div class="quarter-metrics">
+        <div class="metric-pill"><div class="mp-label">Stock Price</div><div class="mp-val neg">$24.86 (#10) -15.9%</div></div>
+        <div class="metric-pill"><div class="mp-label">Gross Revenue</div><div class="mp-val neg">$1,086,404 (#12)</div></div>
+        <div class="metric-pill"><div class="mp-label">Net Profit</div><div class="mp-val neg">$(815) (#10)</div></div>
+        <div class="metric-pill"><div class="mp-label">Reliability</div><div class="mp-val pos">94.9% (#7)</div></div>
+        <div class="metric-pill"><div class="mp-label">Quality</div><div class="mp-val pos">85 (#9)</div></div>
+        <div class="metric-pill"><div class="mp-label">Load Factor</div><div class="mp-val pos">62.8% (#5)</div></div>
+        <div class="metric-pill"><div class="mp-label">Cost/ASM</div><div class="mp-val neg">$0.215 (+9%)</div></div>
+        <div class="metric-pill"><div class="mp-label">Cum. Net Profit</div><div class="mp-val neu">$791,423</div></div>
+      </div>
+
+      <div class="quarter-body">
+        <div class="quarter-section-title">📊 What Happened</div>
+        <p class="quarter-text">Q7 was a near-breakeven quarter — net profit/loss of just <strong>$(815)</strong>. Despite this, load factor improved significantly to <strong>62.8% (Rank 5)</strong> and reliability stayed high at 94.9%. The primary problem was cost pressure: Cost/ASM jumped to $0.215 (+9%) while Yield/ASM fell to $0.171 (Rank 12). The stock price fell 15.9% to $24.86 — a significant investor confidence signal.</p>
+
+        <div class="quarter-section-title">🎯 Key Decisions Made</div>
+        <p class="quarter-text">In response to yield compression, the fare was repositioned to <strong>35¢/mile</strong> — a competitive stance to recapture demand while load factor was solid. Promotion was increased to <strong>$6,000</strong> and advertising held at $5,000 to strengthen demand. The $25 baggage fee and $10 seat selection fee were maintained for ancillary revenue. No competitor employees were hired. Cargo deferred again. Financing: scheduled loan payment of $39,465 completed, no new financial instruments.</p>
+
+        <div class="quarter-section-title">🔍 Cost-Revenue Squeeze Analysis</div>
+        <p class="quarter-text">The yield per ASM at $0.171 (lowest in the simulation) versus cost per ASM at $0.215 created a <strong>structural margin compression</strong>. The challenge was that the airline's fixed cost base was not scaling down proportionally with revenue. This dynamic, combined with the Q8 need for a final-round revenue push, framed the critical decisions going into the last quarter.</p>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="quarter-block">
+      <div class="quarter-dot dot-loss">Q8</div>
+      <div class="quarter-header">
+        <span class="quarter-num">QUARTER 8</span>
+        <span class="quarter-title">Final Quarter — Diversification Decision & Simulation Close</span>
+        <div class="quarter-tags">
+          <span class="tag tag-red">Final Net Loss</span>
+          <span class="tag tag-gold">$735K Final Profit</span>
+          <span class="tag tag-teal">D&I Hiring Decision</span>
+        </div>
+      </div>
+
+      <div class="quarter-metrics">
+        <div class="metric-pill"><div class="mp-label">Stock Price</div><div class="mp-val neg">$22.32 (#10) -10.2%</div></div>
+        <div class="metric-pill"><div class="mp-label">Gross Revenue</div><div class="mp-val neg">$1,062,717 (#12)</div></div>
+        <div class="metric-pill"><div class="mp-label">Net Profit</div><div class="mp-val neg">$(56,075) (#10)</div></div>
+        <div class="metric-pill"><div class="mp-label">Reliability</div><div class="mp-val neu">93.0% (#9)</div></div>
+        <div class="metric-pill"><div class="mp-label">Quality</div><div class="mp-val neu">82 (#9)</div></div>
+        <div class="metric-pill"><div class="mp-label">Load Factor</div><div class="mp-val neg">58.1% (#9) -4.7%</div></div>
+        <div class="metric-pill"><div class="mp-label">EPS</div><div class="mp-val neg">$(0.37) (#10)</div></div>
+        <div class="metric-pill"><div class="mp-label">Cum. Net Profit</div><div class="mp-val gold">$735,348 (Rank #8)</div></div>
+      </div>
+
+      <div class="quarter-body">
+        <div class="quarter-section-title">📊 What Happened</div>
+        <p class="quarter-text">The final quarter produced a net loss of <strong>$(56,075)</strong> — the largest quarterly loss since Q1. However, the cumulative profit held at <strong>$735,348 (Rank 8 overall)</strong>. Cost/ASM rose to $0.217 while revenue continued contracting. The airline's conservative financing and disciplined operations throughout the simulation meant it finished the 8-quarter run in the black — a meaningful achievement in a competitive 12-airline field.</p>
+
+        <div class="quarter-section-title">🎯 Key Decisions Made</div>
+        <p class="quarter-text">Fare was increased to <strong>37¢/mile</strong> to improve yield on the existing demand. Marketing was intensified: promotion raised to $7,000, advertising to $6,000, and the <strong>in-flight magazine re-enabled</strong> for brand visibility. The special hiring decision selected <strong>Option 1</strong> — a highly experienced, college-educated, award-winning diverse candidate aligned with D&I values. Cargo service again deferred (requires multiple quarters to break even, incompatible with final-round objectives). No financial instruments deployed.</p>
+
+        <div class="quarter-section-title">🏁 Final Assessment</div>
+        <p class="quarter-text">ForD2 Airlines ended the simulation with <strong>$735,348 cumulative net profit</strong>, peak reliability of 95%, best quality of 86, and six consecutive profitable quarters from Q2–Q6. The Q7–Q8 losses reflected market maturation and competitive pressure, not structural failure. The airline achieved its core goals: positive cumulative profit, zero debt, consistent operational excellence, and ethical stakeholder management throughout.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PERFORMANCE DASHBOARD -->
+<section id="performance">
+  <div class="section-label">Financial & Competitive Analysis</div>
+  <div class="section-title">8-Quarter <span class="accent">Performance</span> Dashboard</div>
+  <p class="section-desc">Complete quarter-by-quarter breakdown of every key performance indicator, with competitive ranking across the 12-airline simulation field.</p>
+
+  <!-- Phase Banners -->
+  <div class="phase-banner">
+    <span class="phase-badge phase-crisis">Q1 — Crisis</span>
+    <p class="phase-text"><strong>Scale-Demand Mismatch.</strong> Revenue Rank #1 but Profit Rank #12. Fleet over-deployed relative to actual demand. The hardest quarter and the most important lesson.</p>
+  </div>
+  <div class="phase-banner">
+    <span class="phase-badge phase-recovery">Q2–Q3 — Recovery & Peak</span>
+    <p class="phase-text"><strong>Breakthrough & Best Performance.</strong> Demand caught operations; Q3 delivered the highest net profit ($404K) and best load factor (67.8%). Cumulative profit crossed $500K.</p>
+  </div>
+  <div class="phase-banner">
+    <span class="phase-badge phase-growth">Q4–Q6 — Stable Growth</span>
+    <p class="phase-text"><strong>Consistent Profitability.</strong> Load factor fluctuated but demand management kept operations in the black. Cumulative profit peaked at $792K in Q6. Quality score hit 86.</p>
+  </div>
+  <div class="phase-banner">
+    <span class="phase-badge phase-plateau">Q7–Q8 — Competitive Plateau</span>
+    <p class="phase-text"><strong>Margin Compression.</strong> Cost/yield squeeze under intensifying competition produced near-breakeven and final-quarter loss. Conservative foundation preserved $735K final profit.</p>
+  </div>
+
+  <div class="kpi-table-wrap">
+    <table class="kpi-table">
+      <thead>
+        <tr>
+          <th>Quarter</th>
+          <th>Stock Price</th>
+          <th>Gross Revenue</th>
+          <th>Net Profit</th>
+          <th>EPS</th>
+          <th>Reliability</th>
+          <th>Quality</th>
+          <th>Load Factor</th>
+          <th>Yield/ASM</th>
+          <th>Cost/ASM</th>
+          <th>Op. Expense</th>
+          <th>Cum. Net Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="qcol">START</td>
+          <td class="neu">$20.00</td>
+          <td class="neu">$2,688,518</td>
+          <td class="pos">$5,253</td>
+          <td class="neu">$0.04</td>
+          <td class="neu">90.3%</td>
+          <td class="neu">65</td>
+          <td class="neu">59.7%</td>
+          <td class="neu">$0.209</td>
+          <td class="neu">$0.208</td>
+          <td class="neu">$2,119,434</td>
+          <td class="neu">$5,253</td>
+        </tr>
+        <tr>
+          <td class="qcol">Q1</td>
+          <td class="neg">$17.03 <span class="rank-lo">#12</span></td>
+          <td class="pos">$3,927,483 <span class="rank-hi">#1</span></td>
+          <td class="neg">$(144,031) <span class="rank-lo">#12</span></td>
+          <td class="neg">$(0.96)</td>
+          <td class="gray">91.9% <span class="rank-mid">#4</span></td>
+          <td class="gray">70 <span class="rank-hi">#3</span></td>
+          <td class="neg">49.7% <span class="rank-lo">#12</span></td>
+          <td class="neg">$0.174 <span class="rank-lo">#11</span></td>
+          <td class="gray">$0.208 <span class="rank-mid">#8</span></td>
+          <td class="neg">$3,955,444</td>
+          <td class="neg">$(138,778)</td>
+        </tr>
+        <tr>
+          <td class="qcol">Q2</td>
+          <td class="pos">$29.36 <span class="rank-mid">#7</span></td>
+          <td class="pos">$4,134,894 <span class="rank-hi">#1</span></td>
+          <td class="pos">$235,916 <span class="rank-hi">#2</span></td>
+          <td class="pos">$1.57</td>
+          <td class="gray">93.1% <span class="rank-mid">#6</span></td>
+          <td class="gray">74 <span class="rank-mid">#5</span></td>
+          <td class="gray">57.2% <span class="rank-mid">#9</span></td>
+          <td class="neg">$0.185 <span class="rank-lo">#11</span></td>
+          <td class="neg">$0.202 <span class="rank-lo">#11</span></td>
+          <td class="gray">$3,795,999</td>
+          <td class="pos">$97,138</td>
+        </tr>
+        <tr>
+          <td class="qcol">Q3</td>
+          <td class="gray">$29.15 <span class="rank-mid">#8</span></td>
+          <td class="neg">$1,833,895 <span class="rank-lo">#10</span></td>
+          <td class="pos">$404,349 <span class="rank-mid">#8</span></td>
+          <td class="pos">$2.70</td>
+          <td class="pos">94.4% <span class="rank-mid">#5</span></td>
+          <td class="pos">81 <span class="rank-mid">#5</span></td>
+          <td class="pos">67.8% <span class="rank-mid">#5</span></td>
+          <td class="gray">$0.211 <span class="rank-mid">#8</span></td>
+          <td class="pos">$0.214 <span class="rank-hi">#4</span></td>
+          <td class="pos">$1,542,907</td>
+          <td class="pos">$501,487</td>
+        </tr>
+        <tr>
+          <td class="qcol">Q4</td>
+          <td class="neg">$27.81 <span class="rank-mid">#5</span></td>
+          <td class="neg">$1,522,458 <span class="rank-lo">#12</span></td>
+          <td class="pos">$69,480 <span class="rank-hi">#4</span></td>
+          <td class="pos">$0.46</td>
+          <td class="pos">94.4% <span class="rank-mid">#4</span></td>
+          <td class="pos">86 <span class="rank-mid">#6</span></td>
+          <td class="neg">50.9% <span class="rank-mid">#8</span></td>
+          <td class="neg">$0.175 <span class="rank-mid">#9</span></td>
+          <td class="neg">$0.199 <span class="rank-lo">#11</span></td>
+          <td class="pos">$1,458,553</td>
+          <td class="pos">$570,967</td>
+        </tr>
+        <tr>
+          <td class="qcol">Q5</td>
+          <td class="pos">$31.05 <span class="rank-mid">#5</span></td>
+          <td class="neg">$1,581,759 <span class="rank-lo">#12</span></td>
+          <td class="pos">$126,255 <span class="rank-mid">#6</span></td>
+          <td class="pos">$0.84</td>
+          <td class="pos">95.0% <span class="rank-mid">#5</span></td>
+          <td class="pos">86 <span class="rank-mid">#6</span></td>
+          <td class="gray">59.4% <span class="rank-mid">#7</span></td>
+          <td class="neg">$0.182 <span class="rank-lo">#10</span></td>
+          <td class="neg">$0.197 <span class="rank-lo">#11</span></td>
+          <td class="pos">$1,448,324</td>
+          <td class="pos">$697,222</td>
+        </tr>
+        <tr>
+          <td class="qcol">Q6</td>
+          <td class="neg">$29.56 <span class="rank-mid">#7</span></td>
+          <td class="neg">$1,518,592 <span class="rank-lo">#12</span></td>
+          <td class="pos">$95,015 <span class="rank-mid">#8</span></td>
+          <td class="pos">$0.63</td>
+          <td class="gray">94.6% <span class="rank-mid">#7</span></td>
+          <td class="neg">81 <span class="rank-lo">#10</span></td>
+          <td class="neg">56.4% <span class="rank-lo">#10</span></td>
+          <td class="neg">$0.175 <span class="rank-lo">#11</span></td>
+          <td class="neg">$0.197 <span class="rank-lo">#12</span></td>
+          <td class="gray">$1,450,817</td>
+          <td class="pos">$792,237</td>
+        </tr>
+        <tr>
+          <td class="qcol">Q7</td>
+          <td class="neg">$24.86 <span class="rank-lo">#10</span></td>
+          <td class="neg">$1,086,404 <span class="rank-lo">#12</span></td>
+          <td class="neg">$(815) <span class="rank-lo">#10</span></td>
+          <td class="neg">$(0.01)</td>
+          <td class="gray">94.9% <span class="rank-mid">#7</span></td>
+          <td class="gray">85 <span class="rank-mid">#9</span></td>
+          <td class="pos">62.8% <span class="rank-mid">#5</span></td>
+          <td class="neg">$0.171 <span class="rank-lo">#12</span></td>
+          <td class="neg">$0.215 <span class="rank-lo">#10</span></td>
+          <td class="pos">$1,163,953</td>
+          <td class="pos">$791,423</td>
+        </tr>
+        <tr>
+          <td class="qcol">Q8</td>
+          <td class="neg">$22.32 <span class="rank-lo">#10</span></td>
+          <td class="neg">$1,062,717 <span class="rank-lo">#12</span></td>
+          <td class="neg">$(56,075) <span class="rank-lo">#10</span></td>
+          <td class="neg">$(0.37)</td>
+          <td class="gray">93.0% <span class="rank-mid">#9</span></td>
+          <td class="gray">82 <span class="rank-mid">#9</span></td>
+          <td class="gray">58.1% <span class="rank-mid">#9</span></td>
+          <td class="neg">$0.168 <span class="rank-lo">#12</span></td>
+          <td class="neu">$0.217 <span class="rank-mid">#6</span></td>
+          <td class="gray">$1,158,039</td>
+          <td class="pos">$735,348</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Visual Bar Chart for Net Profit -->
+  <div style="margin-top: 4rem;">
+    <h3 style="font-family: 'Bebas Neue'; font-size: 1.5rem; color: var(--gold); letter-spacing: 1px; margin-bottom: 1.5rem;">Net Profit by Quarter — Visual Breakdown</h3>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">Q1</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-neg" style="width: 36%">$(144,031)</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Q2</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-pos" style="width: 58%">$235,916</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Q3</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-peak" style="width: 100%">$404,349 ← Peak Quarter</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Q4</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-pos" style="width: 17%">$69,480</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Q5</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-pos" style="width: 31%">$126,255</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Q6</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-pos" style="width: 24%">$95,015</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Q7</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-neg" style="width: 2%">$(815)</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Q8</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-neg" style="width: 14%">$(56,075)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Best Rankings -->
+  <div style="margin-top: 4rem;">
+    <h3 style="font-family: 'Bebas Neue'; font-size: 1.5rem; color: var(--gold); letter-spacing: 1px; margin-bottom: 1.5rem;">Best Rankings Achieved — 12 Airline Field</h3>
+    <div class="rank-grid">
+      <div class="rank-card">
+        <div class="rank-cat">Gross Revenue</div>
+        <div class="rank-val rank-green">Rank #1</div>
+        <div class="rank-context">Q1 & Q2 — $4.13M peak</div>
+      </div>
+      <div class="rank-card">
+        <div class="rank-cat">Net Profit</div>
+        <div class="rank-val rank-green">Rank #2</div>
+        <div class="rank-context">Q2 — $235,916</div>
+      </div>
+      <div class="rank-card">
+        <div class="rank-cat">Quality Score</div>
+        <div class="rank-val rank-green">Rank #3</div>
+        <div class="rank-context">Q1 — Quality 70</div>
+      </div>
+      <div class="rank-card">
+        <div class="rank-cat">Cost/ASM</div>
+        <div class="rank-val rank-green">Rank #4</div>
+        <div class="rank-context">Q3 — $0.214</div>
+      </div>
+      <div class="rank-card">
+        <div class="rank-cat">Reliability</div>
+        <div class="rank-val rank-green">Rank #4</div>
+        <div class="rank-context">Q1 & Q4 — 94.4%</div>
+      </div>
+      <div class="rank-card">
+        <div class="rank-cat">Load Factor</div>
+        <div class="rank-val rank-gold">Rank #5</div>
+        <div class="rank-context">Q3 — 67.8% peak</div>
+      </div>
+      <div class="rank-card">
+        <div class="rank-cat">Stock Price</div>
+        <div class="rank-val rank-gold">Rank #5</div>
+        <div class="rank-context">Q4 & Q5 — $31.05 peak</div>
+      </div>
+      <div class="rank-card">
+        <div class="rank-cat">Cumulative Profit</div>
+        <div class="rank-val rank-gold">Rank #8</div>
+        <div class="rank-context">Final — $735,348</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TEAM & RESPONSIBILITY -->
+<section id="responsibility">
+  <div class="section-label">Team Structure & Responsibilities</div>
+  <div class="section-title">Who Did <span class="accent">What</span></div>
+  <p class="section-desc">ForD2 Airlines was managed by a 4-person team, each responsible for a distinct functional area of airline operations. Every decision was made collaboratively but executed through individual expertise.</p>
+
+  <div class="resp-grid">
+    <div class="resp-card">
+      <div class="resp-card-header">
+        <div class="resp-icon" style="background: rgba(59,130,246,0.15);">✈️</div>
+        <div>
+          <div class="resp-name">McKenzie Miller</div>
+          <div class="resp-role">B — Fares / Fleet / Fuel / Maintenance</div>
+        </div>
+      </div>
+      <ul class="decision-list">
+        <li>Maintained 37¢/mile fare with Normal pricing structure all 8 quarters</li>
+        <li>Managed TP-300 fleet (Normal config) across 4 routes with zero aircraft acquisitions</li>
+        <li>Held Level 2 maintenance ($3,500/aircraft/qtr) for superior reliability</li>
+        <li>Secured fuel contracts every quarter — zero spot-price exposure</li>
+        <li>Avg Cost/ASM $0.206 · Avg Yield/ASM $0.181 · Best Op. Expense $1.16M (Q7)</li>
+      </ul>
+    </div>
+
+    <div class="resp-card">
+      <div class="resp-card-header">
+        <div class="resp-icon" style="background: rgba(34,197,94,0.15);">🗺️</div>
+        <div>
+          <div class="resp-name">Madison Turner</div>
+          <div class="resp-role">C — Routes & Regions</div>
+        </div>
+      </div>
+      <ul class="decision-list">
+        <li>Operated 4 stable routes (3A/3B/3E1/3F) throughout all 8 quarters — no additions or removals</li>
+        <li>Route 3F 2-Month Sale applied strategically to drive demand without cutting base fares</li>
+        <li>Managed load factor from 49.7% (Q1 Rank 12) → 67.8% peak (Q3 Rank 5)</li>
+        <li>Short-to-medium haul focus (400–600 miles) perfectly matched TP-300 efficiency range</li>
+        <li>Operational consistency provided predictability for financial planning across all quarters</li>
+      </ul>
+    </div>
+
+    <div class="resp-card">
+      <div class="resp-card-header">
+        <div class="resp-icon" style="background: rgba(155,89,182,0.15);">👥</div>
+        <div>
+          <div class="resp-name">Kelby Smith</div>
+          <div class="resp-role">D — Wages & Social Causes</div>
+        </div>
+      </div>
+      <ul class="decision-list">
+        <li>Maintained +2% above prevailing wage for ALL employees across all 8 quarters</li>
+        <li>Invested $8,000/quarter in quality & training — drove quality score from 70 → 86</li>
+        <li>HR philosophy: competitive wages → motivated workforce → 93–95% reliability</li>
+        <li>Environmental causes selected as CSR focus — sustained commitment throughout</li>
+        <li>Q8 special decision: hired diverse, college-educated, award-winning cabin attendant (D&I commitment)</li>
+      </ul>
+    </div>
+
+    <div class="resp-card" style="border-left: 3px solid var(--gold);">
+      <div class="resp-card-header">
+        <div class="resp-icon" style="background: rgba(245,166,35,0.15);">📊</div>
+        <div>
+          <div class="resp-name">Md Nahid Rahman</div>
+          <div class="resp-role">E — Marketing / Financing / Services</div>
+        </div>
+      </div>
+      <ul class="decision-list">
+        <li>Directed marketing budgets ($7K promotion + $6K advertising in final quarters) 100% to Region 3</li>
+        <li>Maintained in-flight magazine, baggage fee ($25), and seat selection fee ($10) for ancillary revenue</li>
+        <li>Preserved zero-debt financing throughout — no loans, no stock issuance, no dividends</li>
+        <li>Made 8 rounds of detailed, data-driven decisions on fare, service levels, and special decisions</li>
+        <li>Declined high-risk special decisions (charter trip, cargo service, competitor hiring)</li>
+        <li>Accepted dual designate partnership (Q4) to boost passenger inflow at low cost</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MY DECISIONS IN DETAIL -->
+<section id="my-decisions" style="background: rgba(17,34,64,0.3);">
+  <div class="section-label">Individual Contribution — Md Nahid Rahman</div>
+  <div class="section-title">My <span class="accent">Decision Rationale</span> — All 8 Rounds</div>
+  <p class="section-desc">As the team member responsible for Marketing, Financing, and Services, every quarter required analyzing the income statement, load factor, competitive benchmarks, and forward scenarios. Here is the complete record of every decision and the business logic behind it.</p>
+
+  <div class="my-rounds">
+
+    <div class="my-round-card">
+      <div class="mrc-header">
+        <span class="mrc-q">Q1 DECISION</span>
+        <span class="mrc-title">Foundation Setting — Demand Building at Low Cost</span>
+        <span class="tag tag-teal">Conservative Entry</span>
+      </div>
+      <p class="mrc-body">Focused on <strong>increasing demand while keeping costs controlled</strong>. Maintained consistent promotion budget for brand visibility and added the in-flight magazine to improve brand awareness. Invested $1,000 in environmental causes to strengthen brand image. Concentrated <strong>100% of marketing in Region 3</strong> to avoid expansion costs and build a dominant position in one market. Zero sales force to keep fixed costs low in the early stage. In financing, made no changes — sufficient cash and available credit meant unnecessary debt was avoidable. Joined <strong>online consortiums</strong> as the special decision to increase demand reach at minimal cost. <em>Overall strategy: balance growth and cost efficiency in the early stage.</em></p>
+      <div class="mrc-decisions">
+        <span class="mrc-dec">100% Region 3</span>
+        <span class="mrc-dec">Online Consortiums</span>
+        <span class="mrc-dec">$0 Sales Force</span>
+        <span class="mrc-dec">Env. Causes $1K</span>
+        <span class="mrc-dec">Zero New Debt</span>
+      </div>
+    </div>
+
+    <div class="my-round-card">
+      <div class="mrc-header">
+        <span class="mrc-q">Q2 DECISION</span>
+        <span class="mrc-title">Demand Acceleration — Load Factor Recovery Campaign</span>
+        <span class="tag tag-green">Demand Push</span>
+      </div>
+      <p class="mrc-body">With low load factor (49.7%) identified as the core Q1 problem, <strong>increased promotion and advertising budgets</strong> to drive more bookings and improve seat utilization. Maintained Region 3 focus for efficiency. Kept zero sales force — advertising is sufficient at this stage. Cabin/Food at Level 1 for basic but acceptable customer experience while controlling costs. Maintained baggage and seat selection fees for ancillary revenue streams. <strong>No financing changes</strong> — positive cash flow and growing profitability meant avoiding loans, stock changes, and dividends was the right call. Strategy aimed at: improving demand, maintaining efficiency, protecting profitability — all three simultaneously.</p>
+      <div class="mrc-decisions">
+        <span class="mrc-dec">↑ Promotion Budget</span>
+        <span class="mrc-dec">↑ Advertising Budget</span>
+        <span class="mrc-dec">Level 1 Cabin</span>
+        <span class="mrc-dec">Baggage Fee On</span>
+        <span class="mrc-dec">Seat Selection Fee On</span>
+      </div>
+    </div>
+
+    <div class="my-round-card">
+      <div class="mrc-header">
+        <span class="mrc-q">Q3 DECISION</span>
+        <span class="mrc-title">Cost Discipline — Right-Sizing Marketing Spend</span>
+        <span class="tag tag-gold">Cost Optimization</span>
+      </div>
+      <p class="mrc-body">With demand improving and load factor recovering, shifted strategy to <strong>cost discipline</strong>. Reduced promotion to $3,000 and advertising to $3,500 — removing PR and in-flight magazine as they don't generate immediate bookings. Kept normal pricing with fare at 35¢, Level 1 service, and only baggage fee retained for extra revenue without affecting demand. Maintained Region 3 focus. <strong>Conservative financing maintained</strong> — no new debt, stable cash position preserved. This quarter demonstrated the principle: <em>once demand is stabilized, reduce marketing overhead and let operations generate profit naturally.</em> Result: best quarter of simulation ($404K net profit).</p>
+      <div class="mrc-decisions">
+        <span class="mrc-dec">↓ Promotion $3K</span>
+        <span class="mrc-dec">↓ Advertising $3.5K</span>
+        <span class="mrc-dec">Removed PR</span>
+        <span class="mrc-dec">Removed Magazine</span>
+        <span class="mrc-dec">Baggage Fee Only</span>
+      </div>
+    </div>
+
+    <div class="my-round-card">
+      <div class="mrc-header">
+        <span class="mrc-q">Q4 DECISION</span>
+        <span class="mrc-title">Crisis Response — Load Factor Below Break-Even (50.9%)</span>
+        <span class="tag tag-red">Break-Even Crisis</span>
+        <span class="tag tag-green">Two-Lever Response</span>
+      </div>
+      <p class="mrc-body">Load factor at 50.9% was <strong>below the break-even threshold of ~56.9%</strong>. As the marketing/financing/services decision-maker, I diagnosed this as weak demand and took a two-lever approach: <strong>increase demand AND reduce costs simultaneously</strong>. Raised promotion to $4,000 (+$1K) and advertising to $5,000 (+$1.5K) targeting more bookings. Eliminated PR ($1,500→$0) and in-flight magazine ($1K→$0) as low-impact expenses — reallocating toward high-impact activities. Reduced cabin/food from Level 2 to Level 1 to lower per-passenger costs. <strong>Accepted dual designate partnership</strong> to increase passenger inflow through network connections. <strong>Deferred cargo service</strong> — requires long-term investment, wrong time to add costs. Cash position strong ($1.1M+), no financing changes needed.</p>
+      <div class="mrc-decisions">
+        <span class="mrc-dec">↑ Promotion $4K</span>
+        <span class="mrc-dec">↑ Advertising $5K</span>
+        <span class="mrc-dec">Level 1 Service</span>
+        <span class="mrc-dec">Dual Designate ✓</span>
+        <span class="mrc-dec">Cargo Deferred</span>
+        <span class="mrc-dec">PR $0</span>
+      </div>
+    </div>
+
+    <div class="my-round-card">
+      <div class="mrc-header">
+        <span class="mrc-q">Q5 DECISION</span>
+        <span class="mrc-title">Revenue Optimization — Fare Increase + Ancillary Revenue</span>
+        <span class="tag tag-gold">Yield Improvement</span>
+      </div>
+      <p class="mrc-body">Load factor recovered to 59.4% — above break-even. With demand solid, shifted to <strong>revenue optimization</strong>: slightly increased fare from 35¢ to 36¢ to capture higher revenue per passenger without losing significant demand. Added a <strong>$3 food and drinks fee</strong> and maintained baggage/seat selection fees to maximize ancillary revenue per passenger and improve overall yield. Marketing unchanged ($4K promotion, $5K advertising) — the combination driving the load factor recovery. Removed in-flight magazine and reduced social performance budget and PR to $0 as they don't generate immediate bookings. <strong>Declined charter trip</strong> — legal and reputational risks outweigh small profit opportunity. Company name kept unchanged for brand consistency. Cargo service deferred. <strong>No financing changes</strong> — strong cash position, positive profitability, financial stability maintained.</p>
+      <div class="mrc-decisions">
+        <span class="mrc-dec">Fare → 36¢</span>
+        <span class="mrc-dec">$3 Food Fee Added</span>
+        <span class="mrc-dec">Charter Declined ✗</span>
+        <span class="mrc-dec">Name Unchanged</span>
+        <span class="mrc-dec">Cargo Deferred</span>
+      </div>
+    </div>
+
+    <div class="my-round-card">
+      <div class="mrc-header">
+        <span class="mrc-q">Q6 DECISION</span>
+        <span class="mrc-title">Stability — Efficiency Over Expansion</span>
+        <span class="tag tag-teal">Hold & Optimize</span>
+      </div>
+      <p class="mrc-body">With cumulative profit at its peak ($792K), Q6 was about <strong>protecting gains while maintaining profitability</strong>. Held fare at 36¢ with Level 1 service. Kept promotion ($4K) and advertising ($5K) steady — they were working. All marketing 100% in Region 3. Zero sales force and $0 social performance budget. <strong>No financing changes</strong> — cash position $1.73M, sufficient credit. No competitor employee hiring (additional costs and risk). Cargo service not entered (requires significant upfront investment, takes several quarters to break even — not aligned with short-term focus). The decision to <strong>not over-expand</strong> was a conscious strategic choice: in a competitive environment with strong cumulative results, protecting the profit base was more valuable than chasing incremental revenue with high-risk moves.</p>
+      <div class="mrc-decisions">
+        <span class="mrc-dec">36¢ Fare Hold</span>
+        <span class="mrc-dec">$4K Promotion</span>
+        <span class="mrc-dec">$5K Advertising</span>
+        <span class="mrc-dec">No Competitor Hires</span>
+        <span class="mrc-dec">Cargo Declined</span>
+      </div>
+    </div>
+
+    <div class="my-round-card">
+      <div class="mrc-header">
+        <span class="mrc-q">Q7 DECISION</span>
+        <span class="mrc-title">Demand Recovery — Competitive Re-Positioning</span>
+        <span class="tag tag-gold">Strategic Repositioning</span>
+      </div>
+      <p class="mrc-body">Facing yield compression (Yield/ASM $0.171, Rank 12) and near-breakeven results, repositioned <strong>fare to 35¢/mile</strong> to stay competitive while covering the 19.7¢ cost per seat mile break-even of 56.3%. Level 1 cabin service maintained for cost control. $25 baggage fee and $10 seat selection fee retained. Marketing strengthened: <strong>promotion increased to $6,000</strong>, advertising maintained at $5,000 — all 100% Region 3. No sales force or social performance budget. Zero financing changes — strong cash position $1.73M, scheduled loan payment of $39,465 completed. Neither competitor employees hired (costs and risk) nor cargo service entered (core passenger focus). <em>Strategy: steady demand growth, cost efficiency, risk control, long-term profitability.</em></p>
+      <div class="mrc-decisions">
+        <span class="mrc-dec">Fare → 35¢</span>
+        <span class="mrc-dec">↑ Promotion $6K</span>
+        <span class="mrc-dec">$5K Advertising</span>
+        <span class="mrc-dec">Loan Payment $39,465</span>
+        <span class="mrc-dec">No Cargo</span>
+      </div>
+    </div>
+
+    <div class="my-round-card">
+      <div class="mrc-header">
+        <span class="mrc-q">Q8 DECISION — FINAL ROUND</span>
+        <span class="mrc-title">Final Push — Yield Maximization & D&I Commitment</span>
+        <span class="tag tag-gold">Final Round</span>
+        <span class="tag tag-teal">D&I Hiring</span>
+      </div>
+      <p class="mrc-body">For the final round, made bold moves to maximize yield: <strong>raised fare from 35¢ to 37¢/mile</strong> — highest of the simulation — as load factor was above break-even and this was the last chance to improve yield. Kept Normal pricing strategy to avoid losing price-sensitive customers. Level 1 service maintained for cost control. $25 baggage + $10 seat selection fees retained. Marketing intensified to support the fare increase: <strong>promotion $7,000, advertising $6,000</strong>, and the <strong>in-flight magazine re-enabled</strong> for brand visibility — total $13K/quarter for the final push. <strong>Financing: no changes</strong> — strong cash position, insufficient time remaining for investment returns. No stock issued (low stock price), no dividends (retain cash). Special hiring decision: selected <strong>Option 1 (the diverse candidate)</strong> — strong airline experience, excellent evaluations, high motivation, college-educated, growth potential toward station manager. Cargo service again declined — multiple quarters needed to break even, incompatible with final-round objectives.</p>
+      <div class="mrc-decisions">
+        <span class="mrc-dec">Fare → 37¢ (Peak)</span>
+        <span class="mrc-dec">↑ Promotion $7K</span>
+        <span class="mrc-dec">↑ Advertising $6K</span>
+        <span class="mrc-dec">Magazine Re-enabled</span>
+        <span class="mrc-dec">D&I Hire Option 1 ✓</span>
+        <span class="mrc-dec">Cargo Declined</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STRATEGY SECTION -->
+<section id="strategy">
+  <div class="section-label">Strategic Framework</div>
+  <div class="section-title">The <span class="accent">ForD2 Strategy</span></div>
+  <p class="section-desc">ForD2 Airlines operated under a coherent strategic philosophy across all 8 quarters. Five core strategic pillars guided every major decision, from fleet deployment to social responsibility.</p>
+
+  <div class="strategy-pillars">
+    <div class="pillar">
+      <div class="pillar-icon">🎯</div>
+      <div class="pillar-title">Operational Consistency</div>
+      <p class="pillar-text">4 routes maintained unchanged for 8 quarters. Fleet configuration, maintenance level, and fuel strategy held constant. This predictability enabled accurate financial forecasting and eliminated strategic noise.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">💼</div>
+      <div class="pillar-title">Conservative Financing</div>
+      <p class="pillar-text">Zero debt throughout the simulation. No stock issuance, no dividends. Self-funded operations preserved financial flexibility and eliminated interest cost drag — a rare discipline in competitive environments.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">👥</div>
+      <div class="pillar-title">Human Capital Investment</div>
+      <p class="pillar-text">+2% above-market wages combined with $8,000/quarter training budget drove quality score from 70 → 86 and maintained 93–95% reliability. Proof that investing in people delivers measurable operational returns.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">📊</div>
+      <div class="pillar-title">Data-Driven Demand Management</div>
+      <p class="pillar-text">Load factor monitored against break-even every quarter. Marketing budgets dynamically adjusted — increased when load factor fell below 57%, reduced when demand was healthy. Never operated on autopilot.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">🌿</div>
+      <div class="pillar-title">ESG Leadership</div>
+      <p class="pillar-text">Environmental causes selected as CSR area. Above-market wages as stakeholder commitment. Q8 diversity hiring aligned with stated D&I values. Business performance and ethical responsibility treated as complementary, not competing.</p>
+    </div>
+  </div>
+
+  <div class="framework">
+    <div class="framework-box">
+      <div class="fb-title">✅ What Worked — Success Factors</div>
+      <ul class="fb-list">
+        <li><span class="check">✓</span><div><strong>Level 2 maintenance</strong> — reduced mechanical failures, supported 93–95% reliability benchmark</div></li>
+        <li><span class="check">✓</span><div><strong>Fuel contracts</strong> — eliminated spot-price volatility risk across all 8 quarters</div></li>
+        <li><span class="check">✓</span><div><strong>Zero debt</strong> — no interest cost drag, maximum financial flexibility preserved</div></li>
+        <li><span class="check">✓</span><div><strong>Route stability</strong> — operational predictability enabled focused improvement rather than spreading thin</div></li>
+        <li><span class="check">✓</span><div><strong>Dynamic marketing</strong> — budgets adjusted precisely when load factor signals required intervention</div></li>
+        <li><span class="check">✓</span><div><strong>Risk declinations</strong> — charter trip and cargo service correctly avoided based on ROI analysis</div></li>
+        <li><span class="check">✓</span><div><strong>Human capital</strong> — above-market wages and training delivered measurable reliability/quality outcomes</div></li>
+      </ul>
+    </div>
+    <div class="framework-box">
+      <div class="fb-title">🔄 What to Do Differently</div>
+      <ul class="fb-list">
+        <li><span class="cross">✗</span><div><strong>Q1 fleet scaling</strong> — deploy fewer aircraft initially to match actual demand; scale up as load factor proves sustainable</div></li>
+        <li><span class="arrow">→</span><div><strong>Market research investment</strong> — purchase industry intelligence reports in Q1–Q2 to better anticipate competitor strategies</div></li>
+        <li><span class="arrow">→</span><div><strong>Route expansion</strong> — once profitability stabilized (Q5+), explore adding a 5th route to grow revenue beyond Rank 12</div></li>
+        <li><span class="arrow">→</span><div><strong>Early cargo evaluation</strong> — start cargo service in Q3–Q4 when cash is strong and break-even window exists</div></li>
+        <li><span class="arrow">→</span><div><strong>Sales force trial</strong> — test 1–2 salespersons in Q3 when operations are efficient to assess revenue uplift vs. cost</div></li>
+        <li><span class="arrow">→</span><div><strong>Revenue diversification</strong> — reduce dependence on yield/ASM by building ancillary revenue streams earlier in the simulation</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Operational Excellence Scores -->
+  <div class="progress-section">
+    <h3 style="font-family: 'Bebas Neue'; font-size: 1.5rem; color: var(--gold); letter-spacing: 1px; margin-bottom: 2rem;">Operational Excellence Scorecard — End of Simulation</h3>
+    <div class="progress-item">
+      <div class="progress-header"><span class="progress-name">Reliability (Best: 95.0%)</span><span class="progress-score">95.0% / 100%</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width: 95%"></div></div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-header"><span class="progress-name">Quality Score (Best: 86/100)</span><span class="progress-score">86 / 100</span></div>
+      <div class="progress-track"><div class="progress-fill gold" style="width: 86%"></div></div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-header"><span class="progress-name">Load Factor Achievement (Best: 67.8%)</span><span class="progress-score">67.8% / 100%</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width: 67.8%"></div></div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-header"><span class="progress-name">Goal Fulfillment (8 of 9 objectives met)</span><span class="progress-score">88.9%</span></div>
+      <div class="progress-track"><div class="progress-fill gold" style="width: 88.9%"></div></div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-header"><span class="progress-name">Cumulative Profitability (Positive Q2–Q6)</span><span class="progress-score">$735,348 Rank #8</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width: 73.5%"></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LESSONS LEARNED -->
+<section id="lessons">
+  <div class="section-label">Applied Business Knowledge</div>
+  <div class="section-title">Key <span class="accent">Lessons Learned</span></div>
+  <p class="section-desc">This simulation was the application of four years of undergraduate business education — finance, marketing, operations management, HR, and strategic management — in a live competitive environment. Here are the deepest lessons.</p>
+
+  <div class="lessons-grid">
+    <div class="lesson-card">
+      <div class="lesson-num">01</div>
+      <div class="lesson-icon">⚡</div>
+      <div class="lesson-title">Match Scale to Demand — Always</div>
+      <p class="lesson-text">Q1's $144K loss with Rank #1 revenue was the most important lesson of the simulation. <strong>High revenue doesn't mean profitability</strong> if your cost structure isn't matched to actual demand. Break-even analysis must precede fleet deployment decisions, not follow them.</p>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">02</div>
+      <div class="lesson-icon">📈</div>
+      <div class="lesson-title">Resilience Over Perfection</div>
+      <p class="lesson-text">From <strong>Rank #12 profit to Rank #2 in one quarter</strong> — the Q1→Q2 turnaround proved that the response to failure matters more than avoiding it. A clear diagnosis, targeted adjustments, and execution discipline can reverse even the worst starting position.</p>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">03</div>
+      <div class="lesson-icon">💡</div>
+      <div class="lesson-title">Dynamic Marketing Is a Competitive Weapon</div>
+      <p class="lesson-text">Fixed marketing budgets are wasteful. <strong>Marketing spend should be calibrated to load factor signals</strong>: increase when below break-even, reduce when demand is healthy. Treating promotion as a variable cost (not fixed overhead) unlocked significant profitability.</p>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">04</div>
+      <div class="lesson-icon">🏦</div>
+      <div class="lesson-title">Conservative Financing Wins Long-Term</div>
+      <p class="lesson-text">Zero debt across 8 quarters meant <strong>zero interest cost drag</strong>. In volatile competitive environments, financial flexibility — the ability to respond to shocks without debt covenants — is a strategic asset that doesn't appear on a balance sheet but absolutely drives outcomes.</p>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">05</div>
+      <div class="lesson-icon">👤</div>
+      <div class="lesson-title">People Investment = Operational Excellence</div>
+      <p class="lesson-text">The connection between <strong>above-market wages + training investment and 93–95% reliability</strong> was causal, not coincidental. Quality score grew from 70 → 86 over the simulation. Investing in human capital is not a cost — it's infrastructure for operational performance.</p>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">06</div>
+      <div class="lesson-icon">🛑</div>
+      <div class="lesson-title">Saying No Is a Strategic Decision</div>
+      <p class="lesson-text">The charter trip, early cargo service, and competitor hiring were all declined. <strong>Opportunity cost management</strong> — knowing what NOT to do — preserved focus and financial discipline. Every "yes" costs you a "no" elsewhere. Protecting the core before expanding is sound strategy.</p>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">07</div>
+      <div class="lesson-icon">🌿</div>
+      <div class="lesson-title">ESG Is Complementary to Profit</div>
+      <p class="lesson-text">Environmental CSR commitment, above-market wages, and diversity hiring were not at odds with profitability. The airline maintained <strong>$735K cumulative profit while being a social leader</strong>. Stakeholder theory in practice — you can optimize for multiple stakeholders simultaneously.</p>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">08</div>
+      <div class="lesson-icon">📊</div>
+      <div class="lesson-title">Yield vs. Volume: Know the Difference</div>
+      <p class="lesson-text">Switching from high-volume (Q1–Q2, $4M revenue) to right-sized operations ($1.5M revenue, better profit) taught the critical distinction between <strong>revenue maximization and profit maximization</strong>. A smaller, efficient, high-load-factor operation beats a large, underutilized fleet every time.</p>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">09</div>
+      <div class="lesson-icon">🔮</div>
+      <div class="lesson-title">Competitive Markets Don't Allow Complacency</div>
+      <p class="lesson-text">Q5–Q6 peak performance was followed by Q7–Q8 decline. <strong>No competitive advantage is permanent</strong>. Market-leading positions require continuous reinvestment and strategic evolution. The plateau hit because the airline stopped growing its revenue base while costs remained fixed.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">About the Author</div>
+  <div class="about-grid">
+    <div class="about-left">
+      <div class="about-name">Md Nahid<br>Rahman</div>
+      <div class="about-title">Marketing / Financing / Services — ForD2 Airlines</div>
+      <div class="about-univ">Strategic Management · Undergraduate Capstone · Spring 2026</div>
+
+      <div class="skills-list">
+        <span class="skill-chip">Strategic Management</span>
+        <span class="skill-chip">Financial Analysis</span>
+        <span class="skill-chip">Marketing Strategy</span>
+        <span class="skill-chip">Operations Management</span>
+        <span class="skill-chip">Human Resources</span>
+        <span class="skill-chip">Business Analytics</span>
+        <span class="skill-chip">Corporate Finance</span>
+        <span class="skill-chip">ESG Strategy</span>
+        <span class="skill-chip">Competitive Strategy</span>
+        <span class="skill-chip">Decision Modeling</span>
+      </div>
+    </div>
+    <div class="about-right">
+      <p class="about-text">This airline simulation was the capstone application of my <strong>undergraduate business education</strong> — four years of coursework in finance, marketing, operations, HR, and strategy condensed into 8 real-time competitive quarters against 11 other teams.</p>
+      <p class="about-text">As the team member responsible for <strong>Marketing, Financing, and Services</strong>, I made 8 rounds of detailed decisions supported by income statement analysis, load factor benchmarking, break-even calculations, and competitive intelligence. Every decision had a documented rationale grounded in business theory and data.</p>
+      <p class="about-text">The simulation demanded <strong>cross-functional integration</strong> — my marketing decisions affected HR's workforce quality, which affected operations' reliability, which affected finance's cost per ASM. Understanding these interdependencies and optimizing across them was the core challenge and the core lesson.</p>
+      <p class="about-text">The final result — <strong>$735,348 cumulative net profit, Rank #8 in a 12-airline field, 95% peak reliability, and consistent ESG leadership</strong> — reflects the practical application of business knowledge in a competitive environment that doesn't forgive mistakes or reward complacency.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">ForD2 Airlines</div>
+  <div class="footer-text">Strategic Management Simulation · Spring 2026 · Grader: Erick Chang · Due: April 30, 2026</div>
+  <div class="footer-links">
+    <a href="#overview">Overview</a>
+    <a href="#quarters">Quarters</a>
+    <a href="#responsibility">Team</a>
+    <a href="#strategy">Strategy</a>
+    <a href="#lessons">Lessons</a>
+  </div>
+</footer>
+
+</body>
+</html>
